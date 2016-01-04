@@ -1,0 +1,237 @@
+<html>
+<meta charset='utf-8'>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.js" charset='utf-8'></script>
+</meta>
+<style>
+    .sparkline-wrapper {
+        position: relative;
+        width: 800px;
+        margin: 0 auto;
+    }
+
+    .main-wrapper .streak {
+        right: 64px;
+    }
+    .sparkline {
+        overflow: hidden;
+        width: 645px;
+        height: 18px;
+        margin: 40px 0 0 0;
+        position: relative;
+    }
+    .sparkline > div {
+        position: absolute;
+    }
+
+    .sparkline .drawn-line {
+        float: left;
+        height: 8px;
+        width: 1px;
+        background: #444;
+    }
+    .sparkline [data-binary-var='1']{
+        border-bottom: 1px solid #444;
+    }
+    .sparkline [data-binary-var='0']{
+        top: 10px;
+        border-top: 2px solid #444;
+    }
+
+
+</style>
+<body>
+<br>
+<div class="sparkline-wrapper main-wrapper" >
+    <div class="sparkline sparkline-main" id='second-wrapper-main'>
+    </div>
+
+</div>
+
+
+</body>
+<script>
+'use strict';
+var boston_record = [
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'loss'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['home', 'loss'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'loss'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'win'],
+    ['away', 'win'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['away', 'loss'],
+    ['home', 'loss'],
+    ['home', 'loss'],
+    ['home', 'loss'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win'],
+    ['home', 'win']
+];
+
+d3.select('#second-wrapper-main')
+  .selectAll('div')
+    .data(boston_record)
+  .enter().append('div')
+    .attr('class', 'drawn-line')
+    .attr('data-binary-var', function (d) {
+        if (d[1] === 'win') {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    })
+    .style('left', function(d, i) { return i * 4 + 'px';});
+
+
+</script>
+</html>

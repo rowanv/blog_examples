@@ -1,0 +1,262 @@
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We use <code>initialize_javascript</code> so that we are able to render our plots within the iPython notebook, and <code>np.random.seed</code> so we are able to reproduce our results.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">nvd3</span>
+
+
+<span class="n">nvd3</span><span class="o">.</span><span class="n">ipynb</span><span class="o">.</span><span class="n">initialize_javascript</span><span class="p">(</span><span class="n">use_remote</span><span class="o">=</span><span class="k">True</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+
+<div class="output_html rendered_html output_subarea ">
+<link media="all" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.css" type="text/css"
+                        rel="stylesheet"/>
+</div>
+
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+
+
+<div class="output_subarea output_javascript ">
+<script type="text/javascript">
+$.getScript("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js")
+</script>
+</div>
+
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+
+
+<div class="output_subarea output_javascript ">
+<script type="text/javascript">
+$.getScript("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js", function() {
+                              $.getScript("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js", function() {})});
+</script>
+</div>
+
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+
+<div class="output_html rendered_html output_subarea ">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+</div>
+
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+
+<div class="output_html rendered_html output_subarea ">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js"></script>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, we initialize our <code>discreteBarChart</code> object with our desired chart configurations. We pass it our y and x data series, making sure to convert from the numpy.float64, since nvd3 cannot work with unconverted numpy types at this point.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span class="n">chart_type</span> <span class="o">=</span> <span class="s">&#39;discreteBarChart&#39;</span>
+<span class="n">chart</span> <span class="o">=</span> <span class="n">nvd3</span><span class="o">.</span><span class="n">discreteBarChart</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">chart_type</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+
+<span class="n">ydata</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">xdata</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+
+<span class="n">chart</span><span class="o">.</span><span class="n">add_serie</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">ydata</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">xdata</span><span class="p">)</span>
+<span class="n">chart</span><span class="o">.</span><span class="n">buildhtml</span><span class="p">()</span>
+<span class="n">chart_html</span> <span class="o">=</span> <span class="n">chart</span><span class="o">.</span><span class="n">htmlcontent</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can see the output of the rendered HTML -- it's created some JS and HTML elements -</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span class="n">chart_html</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[4]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&apos;&lt;!DOCTYPE html&gt;\n&lt;html lang=&quot;en&quot;&gt;\n    &lt;head&gt;\n        &lt;meta charset=&quot;utf-8&quot; /&gt;\n        &lt;link href=&quot;https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.css&quot; rel=&quot;stylesheet&quot; /&gt;\n        &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js&quot;&gt;&lt;/script&gt;\n        &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js&quot;&gt;&lt;/script&gt;\n    &lt;/head&gt;\n    &lt;body&gt;\n        \n    &lt;div id=&quot;discretebarchart&quot;&gt;&lt;svg style=&quot;width:500px;height:500px;&quot;&gt;&lt;/svg&gt;&lt;/div&gt;\n\n\n    &lt;script&gt;\n\n\n\n                data_discretebarchart=[{&quot;key&quot;: &quot;Serie 1&quot;, &quot;values&quot;: [{&quot;x&quot;: 0, &quot;y&quot;: -1.7497654730546974}, {&quot;x&quot;: 1, &quot;y&quot;: 0.34268040332750216}, {&quot;x&quot;: 2, &quot;y&quot;: 1.153035802563644}, {&quot;x&quot;: 3, &quot;y&quot;: -0.25243603652138985}, {&quot;x&quot;: 4, &quot;y&quot;: 0.9813207869512316}, {&quot;x&quot;: 5, &quot;y&quot;: 0.5142188413943821}, {&quot;x&quot;: 6, &quot;y&quot;: 0.22117966922140045}, {&quot;x&quot;: 7, &quot;y&quot;: -1.0700433305682933}, {&quot;x&quot;: 8, &quot;y&quot;: -0.18949583082317534}, {&quot;x&quot;: 9, &quot;y&quot;: 0.25500144427338167}], &quot;yAxis&quot;: &quot;1&quot;}];\n\n\n            nv.addGraph(function() {\n        var chart = nv.models.discreteBarChart();\n\n        chart.margin({top: 30, right: 60, bottom: 20, left: 60});\n\n        var datum = data_discretebarchart;\n\n\n\n                    chart.yAxis\n                .tickFormat(d3.format(\&apos;,.0f\&apos;));\n\n    \n    \n\n        \n\n\n\n            d3.select(\&apos;#discretebarchart svg\&apos;)\n            .datum(datum)\n            .transition().duration(500)\n            .attr(\&apos;width\&apos;, 500)\n            .attr(\&apos;height\&apos;, 500)\n            .call(chart);\n\n    \n        });\n\n\n\n    &lt;/script&gt;\n\n    &lt;/body&gt;\n&lt;/html&gt;&apos;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And if we want to view the actual chart, we can use the <code>display</code> and <code>HTML</code> functions below:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+
+
+<span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">chart_html</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+
+<div class="output_html rendered_html output_subarea ">
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js"></script>
+    </head>
+    <body>
+        
+    <div id="discretebarchart"><svg style="width:500px;height:500px;"></svg></div>
+
+
+    <script>
+
+
+
+                data_discretebarchart=[{"key": "Serie 1", "values": [{"x": 0, "y": -1.7497654730546974}, {"x": 1, "y": 0.34268040332750216}, {"x": 2, "y": 1.153035802563644}, {"x": 3, "y": -0.25243603652138985}, {"x": 4, "y": 0.9813207869512316}, {"x": 5, "y": 0.5142188413943821}, {"x": 6, "y": 0.22117966922140045}, {"x": 7, "y": -1.0700433305682933}, {"x": 8, "y": -0.18949583082317534}, {"x": 9, "y": 0.25500144427338167}], "yAxis": "1"}];
+
+
+            nv.addGraph(function() {
+        var chart = nv.models.discreteBarChart();
+
+        chart.margin({top: 30, right: 60, bottom: 20, left: 60});
+
+        var datum = data_discretebarchart;
+
+
+
+                    chart.yAxis
+                .tickFormat(d3.format(',.0f'));
+
+    
+    
+
+        
+
+
+
+            d3.select('#discretebarchart svg')
+            .datum(datum)
+            .transition().duration(500)
+            .attr('width', 500)
+            .attr('height', 500)
+            .call(chart);
+
+    
+        });
+
+
+
+    </script>
+
+    </body>
+</html>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
