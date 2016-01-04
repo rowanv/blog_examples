@@ -1,45 +1,9 @@
 <html>
-<meta charset='utf-8'>
+<head>
+    <meta charset='utf-8'>
+    <link rel='stylesheet' href='/static/css/rowanv_discrete_sparklines.css'>
+</head>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.js" charset='utf-8'></script>
-</meta>
-<style>
-    .sparkline-wrapper {
-        position: relative;
-        width: 800px;
-        margin: 0 auto;
-    }
-
-    .main-wrapper .streak {
-        right: 64px;
-    }
-    .sparkline {
-        overflow: hidden;
-        width: 645px;
-        height: 18px;
-        margin: 40px 0 0 0;
-        position: relative;
-    }
-    .sparkline > div {
-        position: absolute;
-    }
-
-    .sparkline .drawn-line {
-        float: left;
-        height: 8px;
-        width: 1px;
-        background: #444;
-    }
-    .sparkline [data-binary-var='1']{
-        border-bottom: 1px solid #444;
-    }
-    .sparkline [data-binary-var='0']{
-        top: 10px;
-        border-top: 2px solid #444;
-    }
-
-
-</style>
 <body>
 <br>
 <div class="sparkline-wrapper main-wrapper" >
@@ -50,6 +14,7 @@
 
 
 </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.js" charset='utf-8'></script>
 <script>
 'use strict';
 var boston_record = [

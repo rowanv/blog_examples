@@ -1,0 +1,34 @@
+.sparkline-wrapper {
+    position: relative;
+    width: 800px;
+    margin: 0 auto;
+}
+
+.main-wrapper .streak {
+    right: 64px;
+}
+.sparkline {
+    overflow: hidden;
+    width: 645px;
+    height: 18px;
+    margin: 40px 0 0 0;
+    position: relative;
+}
+.sparkline > div {
+    position: absolute;
+}
+
+.sparkline .drawn-line {
+    float: left;
+    height: 8px;
+    width: 1px;
+    background: #444;
+}
+.sparkline [data-binary-var='1']{
+    border-bottom: 1px solid #444;
+}
+.sparkline [data-binary-var='0']{
+    top: 10px;
+    border-top: 2px solid #444;
+}
+
