@@ -13,15 +13,10 @@
         width:300px;
         height:100px;
     }
-    .sparkline {
-      fill: none;
-      stroke: #000;
-      stroke-width: 0.5px;
-    }
     path {
-    stroke: steelblue;
-    stroke-width: 1;
-    fill: none;
+        stroke: #000;
+        stroke-width: 0.5px;
+        fill: none;
     }
     </style>
 
@@ -42,9 +37,8 @@
 $(document).ready(function() {
 
 
-
     d3.json('/data/not_realtime/currency_rates_month/', function(error, data) {
-        var boxDimensions = {width: 300, height: 60}
+        var boxDimensions = {width: 300, height: 15}
 
         // cleaning data
         //Avoid iterating through stuff prototype chain
@@ -62,8 +56,7 @@ $(document).ready(function() {
 
         window.data = data;
         // Add container divs:
-        console.log('adding container divs');
-        console.log(data);
+
         d3.select('body')
           .selectAll('div')
           .data(d3.keys(data))
@@ -79,16 +72,18 @@ $(document).ready(function() {
           .append('text')
             // get last 3 characters since format is like rates.JPY
             .text(function(d) {return d.slice(-3);})
+          .append('svg')
+            .attr('id', function(d) { return 'graph' + d.slice(-3);})
 
         console.log(data);
 
 
-        function drawSparkline(data) {
+        function drawSparkline(elemId, data) {
         //var data = data['rates.BGN']
 
 
             // create an SVG element inside the #graph div that fills 100% of the div
-        var graph = d3.select("#graph").append("svg:svg").attr("width", "100%").attr("height", "100%");
+        var graph = d3.select(elemId).append("svg:svg").attr("width", "100%").attr("height", "100%");
 
 
         // X scale will fit values from 0-10 within pixels 0-100
@@ -116,13 +111,21 @@ $(document).ready(function() {
                 //console.log('Plotting Y value for data point: ' + d + ' to be at: ' + y(d) + " using our yScale.");
                 // return the Y coordinate where we want to plot this datapoint
                 return y(d);
-            })
+            });
+
 
             // display the line by appending an svg:path element with the data line we created above
             graph.append("svg:path").attr("d", line(data));
+
+        /*var cicle = append('circle')
+                 .attr('class', 'sparkcircle')
+                .attr('cx', function(d, i) {return x(i); })
+                .attr('cy', function(d) {return y(d); })
+                .attr('r', 1.5);*/
         }
         $.each(data, function(country_name, country_series){
-            drawSparkline(data[country_name]);
+            console.log('graph' + country_name.slice(-3))
+            drawSparkline('#graph' + country_name.slice(-3), data[country_name]);
         });
     });
 });
