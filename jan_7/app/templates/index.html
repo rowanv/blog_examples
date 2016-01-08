@@ -2,6 +2,17 @@
 {% block start_scripts %}
 
     <style>
+    text {
+        font-family: sans-serif;
+    }
+    .sparkline-container {
+        position:absolute;
+        top:0px;
+        left:0;
+        float:left;
+        width:300px;
+        height:100px;
+    }
     .sparkline {
       fill: none;
       stroke: #000;
@@ -19,7 +30,8 @@
 
 {% block content %}
 <div id='chart'></div>
-    <div id="graph" class="aGraph" style="position:absolute;top:0px;left:0; float:left; width:300px; height:60px;"></div>
+    <div id="graph" class="aGraph sparkline-container" style=""></div>
+
 
 {% endblock content %}
 
@@ -32,7 +44,7 @@ $(document).ready(function() {
 
 
     d3.json('/data/not_realtime/currency_rates_month/', function(error, data) {
-        console.log(data);
+        var boxDimensions = {width: 300, height: 60}
 
         // cleaning data
         //Avoid iterating through stuff prototype chain
@@ -49,11 +61,31 @@ $(document).ready(function() {
         })
 
         window.data = data;
-
-
-
-        var data = data['rates.BGN']
+        // Add container divs:
+        console.log('adding container divs');
         console.log(data);
+        d3.select('body')
+          .selectAll('div')
+          .data(d3.keys(data))
+            .enter()
+            .append('div')
+            .classed('sparkline-container', function(d) {
+                console.log(d);
+                return true;
+            })
+            .style('top', function(d, i) { return i * 30 + 'px';})
+            .style('left', '500px')
+
+          .append('text')
+            // get last 3 characters since format is like rates.JPY
+            .text(function(d) {return d.slice(-3);})
+
+        console.log(data);
+
+
+        function drawSparkline(data) {
+        //var data = data['rates.BGN']
+
 
             // create an SVG element inside the #graph div that fills 100% of the div
         var graph = d3.select("#graph").append("svg:svg").attr("width", "100%").attr("height", "100%");
@@ -61,31 +93,37 @@ $(document).ready(function() {
 
         // X scale will fit values from 0-10 within pixels 0-100
         var x = d3.scale.linear()
-            .domain([1,79, 2])
-            .range([0, 300]);
+            .domain([1, 60])
+            .range([0, boxDimensions.width]);
         // Y scale will fit values from 0-10 within pixels 0-100
         var y = d3.scale.linear()
-            .domain([1.79, 2])
-            .range([50, 100]);
+            .domain(d3.extent(data, function(d) { return d; }))
+            .range([0, boxDimensions.height]);
 
         // create a line object that represents the SVN line we're creating
         var line = d3.svg.line()
+            // Makes our plots smooth
+            .interpolate('basis')
             // assign the X function to plot our line as we wish
             .x(function(d,i) {
                 // verbose logging to show what's actually being done
-                console.log('Plotting X value for data point: ' + d + ' using index: ' + i + ' to be at: ' + x(i) + ' using our xScale.');
+                //console.log('Plotting X value for data point: ' + d + ' using index: ' + i + ' to be at: ' + x(i) + ' using our xScale.');
                 // return the X coordinate where we want to plot this datapoint
                 return x(i);
             })
             .y(function(d) {
                 // verbose logging to show what's actually being done
-                console.log('Plotting Y value for data point: ' + d + ' to be at: ' + y(d) + " using our yScale.");
+                //console.log('Plotting Y value for data point: ' + d + ' to be at: ' + y(d) + " using our yScale.");
                 // return the Y coordinate where we want to plot this datapoint
                 return y(d);
             })
 
             // display the line by appending an svg:path element with the data line we created above
             graph.append("svg:path").attr("d", line(data));
+        }
+        $.each(data, function(country_name, country_series){
+            drawSparkline(data[country_name]);
+        });
     });
 });
 
