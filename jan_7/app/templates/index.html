@@ -1,9 +1,9 @@
 {% extends 'base_dash.html' %}
 {% block start_scripts %}
-
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <style>
     text {
-        font-family: sans-serif;
+        font-family: 'Open Sans', sans-serif;
     }
     .sparkline-container {
         position:absolute;
@@ -13,9 +13,13 @@
         width:300px;
         height:100px;
     }
+    .sparkcircle {
+      fill: #f00;
+      stroke: none;
+    }
     path {
         stroke: #000;
-        stroke-width: 0.5px;
+        stroke-width: 0.35px;
         fill: none;
     }
     </style>
@@ -24,7 +28,7 @@
 
 
 {% block content %}
-<div id='chart'></div>
+
     <div id="graph" class="aGraph sparkline-container" style=""></div>
 
 
@@ -41,17 +45,17 @@ $(document).ready(function() {
         var boxDimensions = {width: 300, height: 15}
 
         // cleaning data
-        //Avoid iterating through stuff prototype chain
+        // Avoid iterating through all stuff in prototype chain
         $.each(data, function(country_name, country_series){
 
             data_list = []
             for (i in _.range(30)){
 
                 data_list.push(country_series[i]);
-
-                //data['rates.BGN'] = data_list;
             }
-            data[country_name] = data_list
+            data[country_name] = data_list.reverse()
+            // and flip it so the end sparkline will have oldest dates on the left
+            // newest dates on the right
         })
 
         window.data = data;
@@ -66,7 +70,7 @@ $(document).ready(function() {
                 console.log(d);
                 return true;
             })
-            .style('top', function(d, i) { return i * 30 + 'px';})
+            .style('top', function(d, i) { return i * 35 + 'px';})
             .style('left', '500px')
 
           .append('text')
@@ -74,23 +78,28 @@ $(document).ready(function() {
             .text(function(d) {return d.slice(-3);})
           .append('svg')
             .attr('id', function(d) { return 'graph' + d.slice(-3);})
-
-        console.log(data);
-
-
-        function drawSparkline(elemId, data) {
-        //var data = data['rates.BGN']
+          .append('circle')
+            .attr('id', function(d) { return 'circle' + d.slice(-3);})
+            .attr('r', 1.5)
+            .classed('sparkcircle', true);
 
 
-            // create an SVG element inside the #graph div that fills 100% of the div
-        var graph = d3.select(elemId).append("svg:svg").attr("width", "100%").attr("height", "100%");
+
+        function drawSparkline(svgElemId, circleElemId, data) {
+
+            // create an SVG element inside the #elemId div that fills 100% of the div
+        var graph = d3.select(svgElemId)
+            .append("svg:svg")
+            .attr("width", "100%")
+            .attr("height", "100%");
 
 
-        // X scale will fit values from 0-10 within pixels 0-100
+        // X scale will fit values from 0-60 within pixels 0-width
         var x = d3.scale.linear()
-            .domain([1, 60])
+            .domain([0, 60])
             .range([0, boxDimensions.width]);
-        // Y scale will fit values from 0-10 within pixels 0-100
+        // Y scale will fit values from [the extent of our currency fluctations
+        // dataset] within pixels 0-100
         var y = d3.scale.linear()
             .domain(d3.extent(data, function(d) { return d; }))
             .range([0, boxDimensions.height]);
@@ -98,35 +107,37 @@ $(document).ready(function() {
         // create a line object that represents the SVN line we're creating
         var line = d3.svg.line()
             // Makes our plots smooth
-            .interpolate('basis')
+            .interpolate('monotone')
             // assign the X function to plot our line as we wish
             .x(function(d,i) {
-                // verbose logging to show what's actually being done
-                //console.log('Plotting X value for data point: ' + d + ' using index: ' + i + ' to be at: ' + x(i) + ' using our xScale.');
-                // return the X coordinate where we want to plot this datapoint
                 return x(i);
             })
             .y(function(d) {
-                // verbose logging to show what's actually being done
-                //console.log('Plotting Y value for data point: ' + d + ' to be at: ' + y(d) + " using our yScale.");
-                // return the Y coordinate where we want to plot this datapoint
                 return y(d);
             });
-
 
             // display the line by appending an svg:path element with the data line we created above
             graph.append("svg:path").attr("d", line(data));
 
-        /*var cicle = append('circle')
-                 .attr('class', 'sparkcircle')
-                .attr('cx', function(d, i) {return x(i); })
-                .attr('cy', function(d) {return y(d); })
-                .attr('r', 1.5);*/
+        var circle = d3.select(circleElemId)
+            .attr('cx', function(d, i) {return x(29); })
+            .attr('cy', function(d) {console.log('circle');
+                /* And this is really helpful for figuring out what is going on */
+                console.log(svgElemId);
+                console.log(data);
+                console.log(data.slice(-1));
+                return y(data.slice(-1)); })
+
         }
+        // Then add dots for circles
         $.each(data, function(country_name, country_series){
-            console.log('graph' + country_name.slice(-3))
-            drawSparkline('#graph' + country_name.slice(-3), data[country_name]);
+
+            drawSparkline('#graph' + country_name.slice(-3), '#circle' + country_name.slice(-3),data[country_name]);
         });
+        // And move the SVGs by a bit so they are not on top of the
+        // text boxes
+        $('svg').css({left: 45, position: 'absolute'});
+
     });
 });
 
