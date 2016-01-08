@@ -1,9 +1,94 @@
 {% extends 'base_dash.html' %}
+{% block start_scripts %}
+
+    <style>
+    .sparkline {
+      fill: none;
+      stroke: #000;
+      stroke-width: 0.5px;
+    }
+    path {
+    stroke: steelblue;
+    stroke-width: 1;
+    fill: none;
+    }
+    </style>
+
+{% endblock start_scripts %}
+
 
 {% block content %}
+<div id='chart'></div>
+    <div id="graph" class="aGraph" style="position:absolute;top:0px;left:0; float:left; width:300px; height:60px;"></div>
 
 {% endblock content %}
 
-{% block endscripts %}
+{% block end_scripts %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
+<script>
 
-{% endblock endscripts %}
+$(document).ready(function() {
+
+
+
+    d3.json('/data/not_realtime/currency_rates_month/', function(error, data) {
+        console.log(data);
+
+        // cleaning data
+        //Avoid iterating through stuff prototype chain
+        $.each(data, function(country_name, country_series){
+
+            data_list = []
+            for (i in _.range(30)){
+
+                data_list.push(country_series[i]);
+
+                //data['rates.BGN'] = data_list;
+            }
+            data[country_name] = data_list
+        })
+
+        window.data = data;
+
+
+
+        var data = data['rates.BGN']
+        console.log(data);
+
+            // create an SVG element inside the #graph div that fills 100% of the div
+        var graph = d3.select("#graph").append("svg:svg").attr("width", "100%").attr("height", "100%");
+
+
+        // X scale will fit values from 0-10 within pixels 0-100
+        var x = d3.scale.linear()
+            .domain([1,79, 2])
+            .range([0, 300]);
+        // Y scale will fit values from 0-10 within pixels 0-100
+        var y = d3.scale.linear()
+            .domain([1.79, 2])
+            .range([50, 100]);
+
+        // create a line object that represents the SVN line we're creating
+        var line = d3.svg.line()
+            // assign the X function to plot our line as we wish
+            .x(function(d,i) {
+                // verbose logging to show what's actually being done
+                console.log('Plotting X value for data point: ' + d + ' using index: ' + i + ' to be at: ' + x(i) + ' using our xScale.');
+                // return the X coordinate where we want to plot this datapoint
+                return x(i);
+            })
+            .y(function(d) {
+                // verbose logging to show what's actually being done
+                console.log('Plotting Y value for data point: ' + d + ' to be at: ' + y(d) + " using our yScale.");
+                // return the Y coordinate where we want to plot this datapoint
+                return y(d);
+            })
+
+            // display the line by appending an svg:path element with the data line we created above
+            graph.append("svg:path").attr("d", line(data));
+    });
+});
+
+</script>
+
+{% endblock end_scripts %}
