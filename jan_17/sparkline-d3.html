@@ -52,14 +52,15 @@ https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.js" charset='utf-8'></script
 $(document).ready(function() {
 
 
-    d3.json('/data/not_realtime/currency_rates_month/', function(error, data) {
 
-        var data = { 'rates.AAA': [3.7629, 3.853, 3.853, 3.853, 3.9045, 3.8771, 3.9369, 3.877, 3.9004, 3.9004, 3.9004, 3.976, 3.9827, 3.9677, 3.941, 3.941, 3.941, 3.941, 3.9257, 3.852, 3.898, 3.9604, 3.9604, 3.9604, 3.9604, 4.0395, 4.0036, 4.0338, 4.0487, 4.0487], 'rates.BRL': [3.7629, 3.853, 3.853, 3.853, 3.9045, 3.8771, 3.9369, 3.877, 3.9004, 3.9004, 3.9004, 3.976, 3.9827, 3.9677, 3.941, 3.941, 3.941, 3.941, 3.9257, 3.852, 3.898, 3.9604, 3.9604, 3.9604, 3.9604, 4.0395, 4.0036, 4.0338, 4.0487, 4.0487]}
-        console.log(data);
 
-        $.each(data, function(){
-            console.log('hi');
-        })
+        var data = { 'rates.BRL': [3.7629, 3.853, 3.853, 3.853, 3.9045,
+        3.8771, 3.9369, 3.877, 3.9004, 3.9004, 3.9004, 3.976,
+        3.9827, 3.9677, 3.941, 3.941, 3.941, 3.941, 3.9257,
+        3.852, 3.898, 3.9604, 3.9604, 3.9604, 3.9604, 4.0395,
+        4.0036, 4.0338, 4.0487, 4.0487]}
+
+        // Setting dimensions
         var boxDimensions = {width: 300, height: 15}
 
 
@@ -71,7 +72,6 @@ $(document).ready(function() {
             .enter()
             .append('g')
             .classed('sparkline-container', function(d) {
-                console.log(d);
                 return true;
             })
             .style('top', function(d, i) { return (i + 1) * 35 + 'px';})
@@ -127,24 +127,20 @@ $(document).ready(function() {
             .attr('cx', function(d, i) {return x(29); })
             .attr('cy', function(d) {console.log('circle');
                 /* And this is really helpful for figuring out what is going on */
-                console.log(svgElemId);
-                console.log(data);
-                console.log(data.slice(-1));
                 return y(data.slice(-1)); })
 
         }
         // Then add dots for circles
-        console.log('the data', data);
+
         $.each(data, function(country_name, country_series){
-            console.log('in loop');
+
             drawSparkline('#graph' + country_name.slice(-3), '#circle' + country_name.slice(-3),data[country_name]);
-            console.log(country_name, country_series);
         });
         // And move the SVGs by a bit so they are not on top of the
         // text boxes
         $('svg').css({left: 45, position: 'absolute'});
 
-    });
+
 });
 </script>
 
