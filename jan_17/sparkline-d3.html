@@ -1,5 +1,11 @@
-{% extends 'base_dash.html' %}
-{% block start_scripts %}
+
+
+<html>
+<meta charset='utf-8'>
+
+
+
+
     <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <style>
     text {
@@ -24,17 +30,22 @@
     }
     </style>
 
-{% endblock start_scripts %}
 
 
-{% block content %}
+<body>
+
 
     <div id="graph" class="aGraph sparkline-container" style=""></div>
 
 
-{% endblock content %}
+</body>
 
-{% block end_scripts %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="
+https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.js" charset='utf-8'></script>
+
+
 <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
 <script>
 
@@ -42,34 +53,28 @@ $(document).ready(function() {
 
 
     d3.json('/data/not_realtime/currency_rates_month/', function(error, data) {
+
+        var data = { 'rates.AAA': [3.7629, 3.853, 3.853, 3.853, 3.9045, 3.8771, 3.9369, 3.877, 3.9004, 3.9004, 3.9004, 3.976, 3.9827, 3.9677, 3.941, 3.941, 3.941, 3.941, 3.9257, 3.852, 3.898, 3.9604, 3.9604, 3.9604, 3.9604, 4.0395, 4.0036, 4.0338, 4.0487, 4.0487], 'rates.BRL': [3.7629, 3.853, 3.853, 3.853, 3.9045, 3.8771, 3.9369, 3.877, 3.9004, 3.9004, 3.9004, 3.976, 3.9827, 3.9677, 3.941, 3.941, 3.941, 3.941, 3.9257, 3.852, 3.898, 3.9604, 3.9604, 3.9604, 3.9604, 4.0395, 4.0036, 4.0338, 4.0487, 4.0487]}
+        console.log(data);
+
+        $.each(data, function(){
+            console.log('hi');
+        })
         var boxDimensions = {width: 300, height: 15}
 
-        // cleaning data
-        // Avoid iterating through all stuff in prototype chain
-        $.each(data, function(country_name, country_series){
-
-            data_list = []
-            for (i in _.range(30)){
-
-                data_list.push(country_series[i]);
-            }
-            data[country_name] = data_list.reverse()
-            // and flip it so the end sparkline will have oldest dates on the left
-            // newest dates on the right
-        });
 
         // Add container divs:
 
         d3.select('body')
-          .selectAll('div')
+          .selectAll('g')
           .data(d3.keys(data))
             .enter()
-            .append('div')
+            .append('g')
             .classed('sparkline-container', function(d) {
                 console.log(d);
                 return true;
             })
-            .style('top', function(d, i) { return i * 35 + 'px';})
+            .style('top', function(d, i) { return (i + 1) * 35 + 'px';})
             .style('left', '500px')
 
           .append('text')
@@ -129,9 +134,11 @@ $(document).ready(function() {
 
         }
         // Then add dots for circles
+        console.log('the data', data);
         $.each(data, function(country_name, country_series){
-
+            console.log('in loop');
             drawSparkline('#graph' + country_name.slice(-3), '#circle' + country_name.slice(-3),data[country_name]);
+            console.log(country_name, country_series);
         });
         // And move the SVGs by a bit so they are not on top of the
         // text boxes
@@ -139,7 +146,6 @@ $(document).ready(function() {
 
     });
 });
-
 </script>
 
-{% endblock end_scripts %}
+</html>
